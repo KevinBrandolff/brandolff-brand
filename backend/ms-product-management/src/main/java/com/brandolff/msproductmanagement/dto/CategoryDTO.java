@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class CategoryDTO {
 
     private Integer id;
+    @NotNull( message = "category required" )
     private String category;
 
     public CategoryDTO(CategoryEntity categoryEntity ) {

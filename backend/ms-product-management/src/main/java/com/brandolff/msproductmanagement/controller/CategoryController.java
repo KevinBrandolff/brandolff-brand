@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,12 +20,12 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory( @RequestBody CategoryDTO categoryDTO ) {
+    public ResponseEntity<CategoryDTO> createCategory( @RequestBody @Valid CategoryDTO categoryDTO ) {
         return new ResponseEntity<>( service.createCategory( categoryDTO ), CREATED );
     }
 
     @PutMapping
-    public ResponseEntity<CategoryDTO> updateCategory( @RequestBody CategoryDTO categoryDTO ) {
+    public ResponseEntity<CategoryDTO> updateCategory( @RequestBody @Valid CategoryDTO categoryDTO ) {
         return ResponseEntity.ok( service.updateCategory( categoryDTO ) );
     }
 

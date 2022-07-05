@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,10 +18,15 @@ import java.util.stream.Collectors;
 public class ProductDTO {
 
     private Integer id;
+    @NotNull( message = "name required" )
     private String name;
+    @NotNull( message = "price required" )
     private Double price;
+    @NotNull( message = "description required" )
     private String description;
+    @NotNull( message = "size required" )
     private SizeEnum size;
+    @NotNull( message = "category required" )
     private List<CategoryDTO> categories;
     private List<ProductImagesDTO> imagesUrls;
 
