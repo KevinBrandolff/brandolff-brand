@@ -1,6 +1,9 @@
 package com.brandolff.msproductmanagement.controller;
 
+import com.brandolff.msproductmanagement.exception.category.CategoryPersistException;
 import com.brandolff.msproductmanagement.exception.generic.ResourceNotFoundException;
+import com.brandolff.msproductmanagement.exception.product.ProductPersistException;
+import com.brandolff.msproductmanagement.exception.productImages.ProductImagesPersistException;
 import com.brandolff.msproductmanagement.util.ApiErrors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,10 +47,22 @@ public class ControllerAdvice {
         return new ApiErrors(ex.getMessage());
     }
 
-//    @ExceptionHandler( EmployeePersistException.class )
-//    @ResponseStatus( BAD_REQUEST )
-//    public ApiErrors employeePersistException( EmployeePersistException ex ){
-//        return new ApiErrors(ex.getMessage());
-//    }
+    @ExceptionHandler( ProductPersistException.class )
+    @ResponseStatus( BAD_REQUEST )
+    public ApiErrors productPersistException( ProductPersistException ex ){
+        return new ApiErrors(ex.getMessage());
+    }
+
+    @ExceptionHandler( CategoryPersistException.class )
+    @ResponseStatus( BAD_REQUEST )
+    public ApiErrors categoryPersistException( CategoryPersistException ex ){
+        return new ApiErrors(ex.getMessage());
+    }
+
+    @ExceptionHandler( ProductImagesPersistException.class )
+    @ResponseStatus( BAD_REQUEST )
+    public ApiErrors productImagesPersistException( ProductImagesPersistException ex ){
+        return new ApiErrors(ex.getMessage());
+    }
 
 }
