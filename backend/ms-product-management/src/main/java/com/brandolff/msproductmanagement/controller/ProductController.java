@@ -1,11 +1,12 @@
 package com.brandolff.msproductmanagement.controller;
 
+import com.brandolff.msproductmanagement.dto.CategoryDTO;
 import com.brandolff.msproductmanagement.dto.ProductDTO;
 import com.brandolff.msproductmanagement.service.ProductService;
 import static org.springframework.http.HttpStatus.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,42 +21,43 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct( @RequestParam("file") MultipartFile file ){
-        return null;
+    public ResponseEntity<ProductDTO> createProduct( @RequestBody ProductDTO productDTO ){
+        return new ResponseEntity<>( service.createProduct( productDTO ), CREATED );
     }
 
     @PutMapping
-    public ResponseEntity<ProductDTO> updateProduct(){
-        return null;
+    public ResponseEntity<ProductDTO> updateProduct( @RequestBody ProductDTO productDTO ){
+        return ResponseEntity.ok( service.updateProduct(productDTO) );
     }
 
-    @DeleteMapping
+    @DeleteMapping( value = "/{id}" )
     @ResponseStatus( NO_CONTENT )
-    public void deleteProduct(){
+    public void deleteProduct( @PathVariable Integer id ){
+        service.deleteProductById(id);
     }
 
     @GetMapping( value = "/id/{id}" )
-    public ResponseEntity<ProductDTO> findById(){
-        return null;
+    public ResponseEntity<ProductDTO> findById( @PathVariable Integer id ){
+        return ResponseEntity.ok( service.findById(id) );
     }
 
     @GetMapping( value = "/name/{name}" )
-    public ResponseEntity<ProductDTO> findByName(){
-        return null;
+    public ResponseEntity<ProductDTO> findByName( @PathVariable String name ){
+        return ResponseEntity.ok( service.findByName(name) );
     }
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> findAll(){
-        return null;
+        return ResponseEntity.ok( service.findAll() );
     }
 
-    @GetMapping( value = "/size/{size}")
-    public ResponseEntity<List<ProductDTO>> findAllBySize(){
-        return null;
+    @GetMapping( value = "/size/{size}" )
+    public ResponseEntity<List<ProductDTO>> findAllBySize( @PathVariable String size ){
+        return ResponseEntity.ok( service.findAllBySize(size) );
     }
 
     @GetMapping( value = "/by-categories" )
-    public ResponseEntity<List<ProductDTO>> findAllByCategories(){
-        return null;
+    public ResponseEntity<List<ProductDTO>> findAllByCategories(@RequestBody List<CategoryDTO> categories){
+        return ResponseEntity.ok( service.findAllByCategories( categories ) );
     }
 }

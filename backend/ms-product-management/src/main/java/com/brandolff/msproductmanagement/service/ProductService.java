@@ -2,8 +2,10 @@ package com.brandolff.msproductmanagement.service;
 
 import com.brandolff.msproductmanagement.dto.CategoryDTO;
 import com.brandolff.msproductmanagement.dto.ProductDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductService {
 
@@ -14,6 +16,6 @@ public interface ProductService {
     List<ProductDTO> findAllBySize( String size );
     List<ProductDTO> findAllByCategories( List<CategoryDTO> categoriesDTO );
     ProductDTO findById( Integer id );
-    ProductDTO findByName( String name );
+    ProductDTO findByName(String name );
 
 }

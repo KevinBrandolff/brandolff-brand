@@ -22,7 +22,7 @@ public class ProductEntity {
     private String name;
 
     @Column( nullable = false )
-    private Double value;
+    private Double price;
 
     @Column( unique = true, nullable = false )
     private String description;
