@@ -1,12 +1,12 @@
 create table if not exists category_entity (
         id int not null primary key AUTO_INCREMENT,
-        category varchar(255) not null,
+        category varchar(255) unique not null,
 )
 
 create table if not exists product_entity (
         id int not null primary key AUTO_INCREMENT,
         description varchar(255) not null,
-        name varchar(255) not null,
+        name varchar(255) unique not null,
         price double not null,
         size enum('SMALL', 'MEDIUM', 'LARGE', 'XLARGE', 'XXLARGE'),
 )
