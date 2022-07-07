@@ -24,7 +24,7 @@ public class ProductEntity {
     @Column( nullable = false )
     private Double price;
 
-    @Column( unique = true, nullable = false )
+    @Column( nullable = false )
     private String description;
 
     @Column( nullable = false )
