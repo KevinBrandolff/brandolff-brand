@@ -3,27 +3,23 @@ server:
 
 spring:
   profiles:
-    active: test
+    active: dev
 
 ---
 
 spring:
   profiles: dev
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:mysql://localhost:3306/brandolff_brand_test
+    username: root
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
     continue-on-error: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant-path-matcher
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://${auth0.domain}/
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
 
 ---
 
