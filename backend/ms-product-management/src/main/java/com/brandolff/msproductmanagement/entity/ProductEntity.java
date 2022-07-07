@@ -30,7 +30,10 @@ public class ProductEntity {
     @Column( nullable = false )
     private SizeEnum size;
 
-    @ManyToMany
+    @ManyToMany( cascade = CascadeType.MERGE )
+    @JoinTable( name = "product_entity_category",
+            joinColumns = @JoinColumn( name = "product_id" ),
+            inverseJoinColumns = @JoinColumn( name = "category_id" ) )
     private List<CategoryEntity> categories;
 
     @OneToMany( mappedBy = "product" )
