@@ -28,16 +28,21 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct( ProductDTO productDTO ) {
         ProductEntity productEntity = ProductEntity.builder().build();
         BeanUtils.copyProperties( productDTO, productEntity );
+        productEntity.setCategories( productDTO.getCategories().stream().map( (categoryDTO) -> {
+            CategoryEntity categoryEntity = CategoryEntity.builder().build();
+            BeanUtils.copyProperties( categoryDTO, categoryEntity );
+            return categoryEntity;
+        } ).collect(Collectors.toList()) );
         return new ProductDTO( repository.save(productEntity) );
     }
 
     @Override
     public ProductDTO updateProduct(ProductDTO productDTO) {
-        AtomicReference<ProductEntity> producttEntityUpdated = new AtomicReference<>(ProductEntity.builder().build());
+        AtomicReference<ProductEntity> productEntityUpdated = new AtomicReference<>(ProductEntity.builder().build());
 
         repository.findById( productDTO.getId() ).ifPresentOrElse(
                 (productEntity) -> { BeanUtils.copyProperties( productDTO, productEntity );
-                    producttEntityUpdated.set(repository.save(productEntity));
+                    productEntityUpdated.set(repository.save(productEntity));
                 },
                 () -> {
                     throw new ResourceNotFoundException();
@@ -45,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
 
         );
 
-        return new ProductDTO(producttEntityUpdated.get());
+        return new ProductDTO(productEntityUpdated.get());
     }
 
     @Override
@@ -77,11 +82,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO findById(Integer id){
-        return new ProductDTO( repository.findById(id).orElseThrow( () -> new RuntimeException() ) );
+        return new ProductDTO( repository.findById(id).orElseThrow( () -> new ResourceNotFoundException() ) );
     }
 
     @Override
     public ProductDTO findByName(String name) {
-        return new ProductDTO( repository.findByName(name).orElseThrow( () -> new RuntimeException() ) );
+        return new ProductDTO( repository.findByName(name).orElseThrow( () -> new ResourceNotFoundException() ) );
     }
 }
