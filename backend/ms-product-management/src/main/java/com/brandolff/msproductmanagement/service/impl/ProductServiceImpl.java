@@ -6,6 +6,8 @@ import com.brandolff.msproductmanagement.entity.CategoryEntity;
 import com.brandolff.msproductmanagement.entity.ProductEntity;
 import com.brandolff.msproductmanagement.enums.SizeEnum;
 import com.brandolff.msproductmanagement.exception.generic.ResourceNotFoundException;
+import com.brandolff.msproductmanagement.exception.product.ProductPersistException;
+import com.brandolff.msproductmanagement.repository.CategoryRepository;
 import com.brandolff.msproductmanagement.repository.ProductRepository;
 import com.brandolff.msproductmanagement.service.ProductService;
 import org.springframework.beans.BeanUtils;
@@ -19,13 +21,17 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl( ProductRepository repository ) {
+    public ProductServiceImpl( ProductRepository repository, CategoryRepository categoryRepository ) {
         this.repository = repository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public ProductDTO createProduct( ProductDTO productDTO ) {
+        verifyProductName( productDTO.getName() );
+        verifyCategories( productDTO.getCategories() );
         ProductEntity productEntity = ProductEntity.builder().build();
         BeanUtils.copyProperties( productDTO, productEntity );
         productEntity.setCategories( productDTO.getCategories().stream().map( (categoryDTO) -> {
@@ -41,7 +47,17 @@ public class ProductServiceImpl implements ProductService {
         AtomicReference<ProductEntity> productEntityUpdated = new AtomicReference<>(ProductEntity.builder().build());
 
         repository.findById( productDTO.getId() ).ifPresentOrElse(
-                (productEntity) -> { BeanUtils.copyProperties( productDTO, productEntity );
+                (productEntity) -> {
+                    if ( !productDTO.getName().equals( productEntity.getName() ) ) {
+                        verifyProductName( productDTO.getName() );
+                    }
+                    verifyCategories( productDTO.getCategories() );
+                    BeanUtils.copyProperties( productDTO, productEntity );
+                    productEntity.setCategories( productDTO.getCategories().stream().map( (categoryDTO) -> {
+                        CategoryEntity categoryEntity = CategoryEntity.builder().build();
+                        BeanUtils.copyProperties( categoryDTO, categoryEntity );
+                        return categoryEntity;
+                    } ).collect(Collectors.toList()) );
                     productEntityUpdated.set(repository.save(productEntity));
                 },
                 () -> {
@@ -82,11 +98,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO findById(Integer id){
-        return new ProductDTO( repository.findById(id).orElseThrow( () -> new ResourceNotFoundException() ) );
+        return new ProductDTO( repository.findById(id).orElseThrow(ResourceNotFoundException::new) );
     }
 
     @Override
     public ProductDTO findByName(String name) {
-        return new ProductDTO( repository.findByName(name).orElseThrow( () -> new ResourceNotFoundException() ) );
+        return new ProductDTO( repository.findByName(name).orElseThrow(ResourceNotFoundException::new) );
+    }
+
+    private void verifyProductName( String name ) {
+        repository.findByName( name ).ifPresent( productEntity -> {throw new ProductPersistException( "Name already used!" );} );
+    }
+
+    private void verifyCategories( List<CategoryDTO> listCategoryDTO ) {
+        if ( listCategoryDTO != null ) {
+            listCategoryDTO.forEach(categoryDTO -> {
+                CategoryEntity categoryEntity = CategoryEntity.builder().build();
+                BeanUtils.copyProperties(categoryDTO, categoryEntity);
+                categoryRepository.findByIdAndCategory(categoryEntity.getId(), categoryEntity.getCategory()).ifPresentOrElse(categoryEntity1 -> {
+                        },
+                        () -> {
+                            throw new ProductPersistException("Wrong categories informations!");
+                        });
+            });
+        }
     }
 }
