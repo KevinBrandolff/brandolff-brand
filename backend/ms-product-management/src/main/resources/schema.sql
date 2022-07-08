@@ -24,3 +24,11 @@ create table if not exists product_image_entity (
         product_id integer,
         FOREIGN KEY (product_id) REFERENCES product_entity(id)
 )
+
+create table if not exists inventory_product (
+        id int not null primary key AUTO_INCREMENT,
+        stock int not null,
+        size enum('SMALL', 'MEDIUM', 'LARGE', 'XLARGE', 'XXLARGE')
+        product_id integer,
+        FOREIGN KEY (product_id) REFERENCES product_entity(id)
+)
