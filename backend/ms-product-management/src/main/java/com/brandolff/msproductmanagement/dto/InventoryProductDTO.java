@@ -23,4 +23,9 @@ public class InventoryProductDTO {
         this.size = inventoryProductEntity.getSize();
     }
 
+    public InventoryProductDTO( SizeEnum size, Integer stock ) {
+        this.stock = stock;
+        this.size = size;
+    }
+
 }

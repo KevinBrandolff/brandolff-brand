@@ -1,6 +1,7 @@
 package com.brandolff.msproductmanagement.service.impl;
 
 import com.brandolff.msproductmanagement.dto.CategoryDTO;
+import com.brandolff.msproductmanagement.dto.InventoryProductDTO;
 import com.brandolff.msproductmanagement.dto.ProductDTO;
 import com.brandolff.msproductmanagement.entity.CategoryEntity;
 import com.brandolff.msproductmanagement.entity.InventoryProductEntity;
@@ -14,6 +15,7 @@ import com.brandolff.msproductmanagement.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -33,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct( ProductDTO productDTO ) {
         verifyProductName( productDTO.getName() );
         verifyCategories( productDTO.getCategories() );
+        verifyInventoryAndCreateInventoriesRemaining( productDTO.getInventory() );
         ProductEntity productEntity = ProductEntity.builder().build();
         BeanUtils.copyProperties( productDTO, productEntity );
         productEntity.setCategories( productDTO.getCategories().stream().map( (categoryDTO) -> {
@@ -128,6 +131,30 @@ public class ProductServiceImpl implements ProductService {
                             throw new ProductPersistException("Wrong categories informations!");
                         });
             });
+        }
+    }
+
+    private void verifyInventoryAndCreateInventoriesRemaining(List<InventoryProductDTO> inventoryProductDTOList ) {
+
+        List<Integer> inventoriesExisting = new ArrayList<>();
+
+        for ( InventoryProductDTO inventoryDTO : inventoryProductDTOList ) {
+            int index = 0;
+            for ( InventoryProductDTO inventoryDTOToCompare : inventoryProductDTOList ) {
+                if ( inventoryDTO.getSize().equals( inventoryDTOToCompare.getSize() ) ) {
+                    index++;
+                    inventoriesExisting.add( inventoryDTO.getSize().ordinal() );
+                }
+            }
+            if ( index > 1 ) {
+                throw new ProductPersistException( "Invalid inventory information!" );
+            }
+        }
+
+        for( SizeEnum size : SizeEnum.values() ) {
+            if ( !inventoriesExisting.contains( size.ordinal() ) ) {
+                inventoryProductDTOList.add( new InventoryProductDTO( size, 0 ) );
+            }
         }
     }
 }
