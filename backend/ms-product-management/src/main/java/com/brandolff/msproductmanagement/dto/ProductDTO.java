@@ -24,10 +24,9 @@ public class ProductDTO {
     private Double price;
     @NotNull( message = "description required" )
     private String description;
-    @NotNull( message = "size required" )
-    private SizeEnum size;
     @NotNull( message = "category required" )
     private List<CategoryDTO> categories;
+    private List<InventoryProductDTO> inventory;
     private List<ProductImagesDTO> imagesUrls;
 
     public ProductDTO( ProductEntity productEntity ) {
@@ -35,7 +34,9 @@ public class ProductDTO {
         this.name = productEntity.getName();
         this.price = productEntity.getPrice();
         this.description = productEntity.getDescription();
-        this.size = productEntity.getSize();
+        this.inventory = productEntity.getInventory() != null ? productEntity.getInventory().stream()
+                .map( (inventory) -> new InventoryProductDTO(inventory) )
+                .collect(Collectors.toList()) : null;
         this.categories = productEntity.getCategories() != null ? productEntity.getCategories().stream()
                 .map( (category) -> new CategoryDTO(category) )
                 .collect(Collectors.toList()) : null;

@@ -54,7 +54,7 @@ public class ProductController {
 
     @GetMapping( value = "/size/{size}" )
     public ResponseEntity<List<ProductDTO>> findAllBySize( @PathVariable String size ){
-        return ResponseEntity.ok( service.findAllBySize(size) );
+        return ResponseEntity.ok( service.findAllBySizeAndStockGreaterThanZero(size) );
     }
 
     @GetMapping( value = "/by-categories" )

@@ -13,7 +13,7 @@ public interface ProductService {
     ProductDTO updateProduct( ProductDTO productDTO );
     void deleteProductById( Integer id );
     List<ProductDTO> findAll();
-    List<ProductDTO> findAllBySize( String size );
+    List<ProductDTO> findAllBySizeAndStockGreaterThanZero( String size );
     List<ProductDTO> findAllByCategories( List<CategoryDTO> categoriesDTO );
     ProductDTO findById( Integer id );
     ProductDTO findByName(String name );

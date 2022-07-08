@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ProductRepository extends CrudRepository<ProductEntity, Integer> {
 
     List<ProductEntity> findAll();
-    List<ProductEntity> findAllBySize( SizeEnum size );
+    List<ProductEntity> findAllByInventorySizeAndInventoryStockGreaterThan( SizeEnum size, Integer zero );
     ProductEntity findById( int id );
     Optional<ProductEntity> findByName(String name );
     List<ProductEntity> findAllByCategoriesIn( List<CategoryEntity> categories);

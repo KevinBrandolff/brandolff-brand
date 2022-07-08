@@ -1,10 +1,12 @@
 package com.brandolff.msproductmanagement.entity;
 
-import com.brandolff.msproductmanagement.enums.SizeEnum;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
+
+import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @Getter
@@ -27,8 +29,9 @@ public class ProductEntity {
     @Column( nullable = false )
     private String description;
 
-    @Column( nullable = false )
-    private SizeEnum size;
+    @OneToMany( mappedBy = "product")
+    @Cascade( {PERSIST, MERGE, REFRESH, REMOVE} )
+    private List<InventoryProductEntity> inventory;
 
     @ManyToMany( cascade = CascadeType.MERGE )
     @JoinTable( name = "product_entity_category",

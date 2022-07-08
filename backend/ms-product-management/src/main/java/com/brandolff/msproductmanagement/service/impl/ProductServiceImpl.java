@@ -3,6 +3,7 @@ package com.brandolff.msproductmanagement.service.impl;
 import com.brandolff.msproductmanagement.dto.CategoryDTO;
 import com.brandolff.msproductmanagement.dto.ProductDTO;
 import com.brandolff.msproductmanagement.entity.CategoryEntity;
+import com.brandolff.msproductmanagement.entity.InventoryProductEntity;
 import com.brandolff.msproductmanagement.entity.ProductEntity;
 import com.brandolff.msproductmanagement.enums.SizeEnum;
 import com.brandolff.msproductmanagement.exception.generic.ResourceNotFoundException;
@@ -38,6 +39,12 @@ public class ProductServiceImpl implements ProductService {
             CategoryEntity categoryEntity = CategoryEntity.builder().build();
             BeanUtils.copyProperties( categoryDTO, categoryEntity );
             return categoryEntity;
+        } ).collect(Collectors.toList()) );
+        productEntity.setInventory( productDTO.getInventory().stream().map( (inventoryDTO) -> {
+            InventoryProductEntity inventoryEntity = InventoryProductEntity.builder().build();
+            BeanUtils.copyProperties( inventoryDTO, inventoryEntity );
+            inventoryEntity.setProduct( productEntity );
+            return inventoryEntity;
         } ).collect(Collectors.toList()) );
         return new ProductDTO( repository.save(productEntity) );
     }
@@ -80,8 +87,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> findAllBySize(String size) {
-        return repository.findAllBySize( SizeEnum.valueOf(size) ).stream().map( ProductDTO::new ).collect(Collectors.toList());
+    public List<ProductDTO> findAllBySizeAndStockGreaterThanZero(String size) {
+        return repository.findAllByInventorySizeAndInventoryStockGreaterThan( SizeEnum.valueOf(size), 0 ).stream().map( ProductDTO::new ).collect(Collectors.toList());
     }
 
     @Override
